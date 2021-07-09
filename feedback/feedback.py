@@ -16,6 +16,12 @@ class FeedbackXBlock(XBlock):
     # Fields are defined on the class.  You can access them in your code as
     # self.<fieldname>.
 
+    display_name = String(
+        display_name='Name',
+        default='Feedback form',
+        scope=Scope.settings,
+    )
+
     def resource_string(self, path):
         """Handy helper for getting resources from our kit."""
         data = pkg_resources.resource_string(__name__, path)
@@ -38,7 +44,6 @@ class FeedbackXBlock(XBlock):
         html = self.resource_string("static/html/feedback.html")
         frag = Fragment(html.format(self=self))
         frag.add_css(self.resource_string("static/css/feedback.css"))
-        frag.add_javascript(self.resource_string("static/js/src/feedback.js"))
         frag.initialize_js('FeedbackXBlock')
         return frag
 

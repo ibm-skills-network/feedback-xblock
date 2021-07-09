@@ -30,7 +30,7 @@ function FeedbackXBlock(runtime, element) {
         const protocol = document.location.protocol
         const host = clean_host(document.location.host);
         const course_id = get_course_id(document.location.host);
-        return protocol + "//" + host + "/courses/" + course_id + "/feedback";
+        return protocol + "//" + host + "/courses/" + course_id + "/feedback/new?embed=true";
     };
 
     const clean_host = (url) => {
@@ -42,7 +42,7 @@ function FeedbackXBlock(runtime, element) {
         const frame = document.createElement('iframe');
         frame.title="Feedback Form";
         frame.src=get_form_url();
-        frame.height='100%';
+        frame.height='700rem';
         frame.width='100%';
         $('.feedback_block').toArray()[0].appendChild(frame);
     });
