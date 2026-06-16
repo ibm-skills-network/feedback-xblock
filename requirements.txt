@@ -6,6 +6,4 @@
 # entity resolution. Fixed in 6.1.0.
 lxml>=6.1.0
 
-# CVE-2026-44889 (GHSA-fh3h-vg37-cc95): WebOb open redirect via Location header
-# normalization bypass. Fixed in 1.8.10.
 WebOb>=1.8.10
