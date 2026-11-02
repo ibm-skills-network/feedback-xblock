@@ -1,0 +1,68 @@
+name: Tests
+
+on:
+  pull_request:
+  push:
+    branches: [master]
+  merge_group:
+
+permissions:
+  contents: read
+
+jobs:
+  python:
+    name: python (${{ matrix.deps }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # redwood: the versions production runs (see requirements/redwood-constraints.txt).
+        # requirements.txt: the file Mend's bot edits, resolved to the newest versions it
+        # allows. A bot PR that breaks the block fails here.
+        deps: [redwood, requirements.txt]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          # Matches PYTHON_VERSION in the Open edX image.
+          python-version: "3.11"
+      - name: Install (redwood)
+        if: matrix.deps == 'redwood'
+        run: |
+          pip install -c requirements/redwood-constraints.txt setuptools wheel
+          pip install -c requirements/redwood-constraints.txt -e . -r requirements/test.txt
+      - name: Install (requirements.txt)
+        if: matrix.deps == 'requirements.txt'
+        run: |
+          pip install -U setuptools wheel
+          pip install -r requirements.txt -e . -r requirements/test.txt
+      - run: pip list
+      - run: python -m pytest -v
+
+  js:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: node --test tests/js/*.test.mjs
+
+  # The one check branch protection requires. Matrix job names change when the matrix
+  # does, so requiring them directly would leave protection waiting on a name that never
+  # reports.
+  tests:
+    if: always()
+    needs: [python, js]
+    runs-on: ubuntu-latest
+    steps:
+      - name: All test jobs passed
+        env:
+          FAILED: ${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') || contains(needs.*.result, 'skipped') }}
+          RESULTS: ${{ toJSON(needs) }}
+        run: |
+          echo "$RESULTS"
+          if [ "$FAILED" = "true" ]; then
+            echo "A test job did not pass."
+            exit 1
+          fi
