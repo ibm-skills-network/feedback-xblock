@@ -3,7 +3,7 @@ name: Tests
 on:
   pull_request:
   push:
-    branches: [master]
+    branches: [master, verawood-compat]
   merge_group:
 
 permissions:
@@ -17,20 +17,27 @@ jobs:
       fail-fast: false
       matrix:
         # redwood: the versions production runs (see requirements/redwood-constraints.txt).
+        # verawood: the versions the Verawood image runs (requirements/verawood-constraints.txt).
         # requirements.txt: the file Mend's bot edits, resolved to the newest versions it
         # allows. A bot PR that breaks the block fails here.
-        deps: [redwood, requirements.txt]
+        include:
+          - deps: redwood
+            python: "3.11"
+          - deps: verawood
+            python: "3.12"
+          - deps: requirements.txt
+            python: "3.11"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          # Matches PYTHON_VERSION in the Open edX image.
-          python-version: "3.11"
-      - name: Install (redwood)
-        if: matrix.deps == 'redwood'
+          # Matches PYTHON_VERSION in the Open edX image of that release.
+          python-version: ${{ matrix.python }}
+      - name: Install (${{ matrix.deps }})
+        if: matrix.deps != 'requirements.txt'
         run: |
-          pip install -c requirements/redwood-constraints.txt setuptools wheel
-          pip install -c requirements/redwood-constraints.txt -e . -r requirements/test.txt
+          pip install -c requirements/${{ matrix.deps }}-constraints.txt setuptools wheel
+          pip install -c requirements/${{ matrix.deps }}-constraints.txt -e . -r requirements/test.txt
       - name: Install (requirements.txt)
         if: matrix.deps == 'requirements.txt'
         run: |
