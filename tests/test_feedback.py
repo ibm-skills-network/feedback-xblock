@@ -5,6 +5,7 @@ import zipfile
 from importlib.metadata import entry_points
 from pathlib import Path
 
+from webob import Request
 from xblock.core import XBlock
 from xblock.fields import Scope, ScopeIds
 from xblock.runtime import DictKeyValueStore, KvsFieldData
@@ -98,11 +99,19 @@ def test_wheel_contains_static_files(tmp_path):
 def test_get_course_id_handler_answers_a_request():
     # Calls the handler through the runtime, the way the LMS does. A handler that does not
     # take (data, suffix) fails here with a TypeError.
-    from webob import Request
-
     block = make_block()
     block.course_id = "course-v1:IBM+CL0101EN+v1"
     request = Request.blank("/", method="POST", body=b"{}")
     response = block.runtime.handle(block, "get_course_id", request)
     assert response.status_code == 200
     assert response.json == "course-v1:IBM+CL0101EN+v1"
+
+
+def test_get_course_id_handler_reports_an_error_without_a_course():
+    # Plain XBlock runtimes give a block no course_id. This test asserts the handler answers
+    # with its error message instead of a 500.
+    block = make_block()
+    request = Request.blank("/", method="POST", body=b"{}")
+    response = block.runtime.handle(block, "get_course_id", request)
+    assert response.status_code == 200
+    assert response.json["error"] is True
