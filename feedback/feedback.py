@@ -1,10 +1,13 @@
 """This XBlock configures a link to where an iframe for a feedback form is shown."""
 
+import logging
 from importlib.resources import files
 
 from web_fragments.fragment import Fragment
 from xblock.core import XBlock
 from xblock.fields import String, Scope
+
+log = logging.getLogger(__name__)
 
 
 class FeedbackXBlock(XBlock):
@@ -56,7 +59,8 @@ class FeedbackXBlock(XBlock):
     def get_course_id(self, data, suffix=""):
         try:
             return str(self.course_id)
-        except Exception as err:
+        except Exception:
+            log.exception("get_course_id failed for %s", self.scope_ids.usage_id)
             return {
                 "error": True,
                 "message": "An error has occurred. Please refresh the page and try again. If this issue persists, contact support."
