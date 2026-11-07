@@ -93,3 +93,16 @@ def test_wheel_contains_static_files(tmp_path):
     names = zipfile.ZipFile(wheel).namelist()
     for path in STATIC_FILES:
         assert path in names
+
+
+def test_get_course_id_handler_answers_a_request():
+    # Calls the handler through the runtime, the way the LMS does. A handler that does not
+    # take (data, suffix) fails here with a TypeError.
+    from webob import Request
+
+    block = make_block()
+    block.course_id = "course-v1:IBM+CL0101EN+v1"
+    request = Request.blank("/", method="POST", body=b"{}")
+    response = block.runtime.handle(block, "get_course_id", request)
+    assert response.status_code == 200
+    assert response.json == "course-v1:IBM+CL0101EN+v1"

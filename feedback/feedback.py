@@ -53,7 +53,7 @@ class FeedbackXBlock(XBlock):
         return frag
 
     @XBlock.json_handler
-    def get_course_id(self):
+    def get_course_id(self, data, suffix=""):
         try:
             return str(self.course_id)
         except Exception as err:
