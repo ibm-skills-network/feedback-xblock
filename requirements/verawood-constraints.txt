@@ -1,10 +1,13 @@
 # Versions the Verawood Open edX image runs this XBlock against.
 #
 # The same as requirements/redwood-constraints.txt, for edx-platform release/verawood.2:
-# copied from that release's requirements/edx/base.txt, with setuptools and wheel at the
-# versions the Tutor 22 openedx Dockerfile installs.
+# copied from that release's requirements/edx/base.txt, with setuptools at the version the
+# tutor-config-vanilla env/build/openedx/Dockerfile (Tutor 22) installs. The Dockerfile
+# installs wheel 0.43.0, and base.txt then sets it to 0.47.0.
+# That Dockerfile's later `pip install 'typing_extensions>=4.14.0'` is already met by the
+# 4.15.0 pin from base.txt, so it changes nothing here.
 setuptools==80.9.0
-wheel==0.43.0
+wheel==0.47.0
 appdirs==1.4.4
 fs==2.4.16
 lazy==1.6

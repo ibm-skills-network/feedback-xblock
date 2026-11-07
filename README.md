@@ -37,6 +37,8 @@ CI (`.github/workflows/tests.yml`) runs on every pull request:
 - **python (redwood)**: pytest against the versions production runs, pinned in
   `requirements/redwood-constraints.txt`. Update that file when the image moves to a new
   Open edX release.
+- **python (verawood)**: pytest on Python 3.12 against the versions the Verawood image
+  runs, pinned in `requirements/verawood-constraints.txt`.
 - **python (requirements.txt)**: pytest against `requirements.txt` with the newest versions
   it allows. A Mend bot PR that breaks the block fails here.
 - **js**: `feedback.js` under Node's built-in test runner, with a stubbed DOM and jQuery.
@@ -51,6 +53,8 @@ python3.11 -m venv .venv
 .venv/bin/pip install -c requirements/redwood-constraints.txt setuptools wheel
 .venv/bin/pip install -c requirements/redwood-constraints.txt -e . -r requirements/test.txt
 .venv/bin/python -m pytest
+
+# Verawood: the same with python3.12 and requirements/verawood-constraints.txt.
 
 node --test tests/js/*.test.mjs
 ```
