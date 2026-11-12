@@ -12,7 +12,7 @@
 # The Dockerfile also runs its own `pip install` for some packages after base.txt. Those
 # win over base.txt, so fs and typing-extensions below come from the Dockerfile. Check
 # its later RUN lines for others when updating this file.
-setuptools==69.1.1
+setuptools==84.1.0
 wheel==0.43.0
 appdirs==1.4.4
 fs==2.0.18
