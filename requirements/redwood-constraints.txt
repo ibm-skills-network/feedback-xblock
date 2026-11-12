@@ -13,7 +13,7 @@
 # win over base.txt, so fs and typing-extensions below come from the Dockerfile. Check
 # its later RUN lines for others when updating this file.
 setuptools==69.1.1
-wheel==0.43.0
+wheel==0.46.2
 appdirs==1.4.4
 fs==2.0.18
 lazy==1.6
